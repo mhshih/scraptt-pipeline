@@ -44,6 +44,16 @@ class Comment(Base):
     post_id = Column(String, ForeignKey('post.id'), nullable=True, index=True)
 
 
+class Meta(Base):
+    """PTT Meta table."""
+
+    __tablename__ = 'meta'
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    name = Column(String, nullable=False)
+    translate = Column(String, nullable=True)
+
+
 def init_db():
     """Initialize database."""
     _engine = create_engine(URI)
