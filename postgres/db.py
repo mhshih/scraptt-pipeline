@@ -35,7 +35,7 @@ class Comment(Base):
 
     __tablename__ = 'comment'
 
-    id = Column(Integer, primary_key=True, autoincrement=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     type = Column(String, nullable=False)
     author = Column(String, nullable=False)
     published = Column(DateTime, nullable=False, index=True)
@@ -49,9 +49,9 @@ class Meta(Base):
 
     __tablename__ = 'meta'
 
-    id = Column(Integer, primary_key=True, autoincrement=False)
-    name = Column(String, nullable=False)
-    translate = Column(String, nullable=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False, unique=True)
+    translate = Column(String, nullable=True, unique=True)
 
 
 def init_db():
