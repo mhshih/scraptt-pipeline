@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 URI = 'postgresql+psycopg2://postgres:1234@localhost:54321'
 DB_NAME = 'scraptt'
 
-engine = create_engine(f'{URI}/{DB_NAME}', echo=True,)
+engine = create_engine(f'{URI}/{DB_NAME}', echo=False)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
