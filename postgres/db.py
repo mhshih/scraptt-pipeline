@@ -49,11 +49,15 @@ class Post(Base):
     published = Column(DateTime, nullable=False, index=True)
     crawled = Column(DateTime, nullable=False)
     title = Column(String, nullable=False)
-    url = Column(String, nullable=False, index=True)
     content = Column(TEXT, nullable=False)
     upvote = Column(Integer)  # 推文數量
     novote = Column(Integer)  # → 數量
     downvote = Column(Integer)  # 噓文數量
+
+    @property
+    def url(self):
+        """Return URL."""
+        return f'https://www.ptt.cc/bbs/{self.board}/{self.id}.html'
 
 
 class Comment(Base):
