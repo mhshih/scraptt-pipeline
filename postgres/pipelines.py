@@ -35,6 +35,9 @@ class PTTPipeline(BasePipeline):
             title=item['title'],
             url=item['url'],
             content=item['content'],
+            upvote=item['count']['推'],
+            novote=item['count']['→'],
+            downvote=item['count']['噓'],
         )
         self.session.merge(post_obj)
         for comment in item['comments']:
