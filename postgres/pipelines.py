@@ -33,7 +33,6 @@ class PTTPipeline(BasePipeline):
             published=item['time']['published'],
             crawled=item['time']['crawled'],
             title=item['title'],
-            url=item['url'],
             content=item['content'],
             upvote=item['count']['推'],
             novote=item['count']['→'],
