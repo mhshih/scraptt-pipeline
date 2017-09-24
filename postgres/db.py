@@ -4,7 +4,7 @@ from sqlalchemy import (
     create_engine, Column, ForeignKey, TypeDecorator,
     String, TEXT, CHAR, Integer, DateTime
 )
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 URI = 'postgresql+psycopg2://postgres:1234@scraptt-db:5432'
@@ -38,6 +38,20 @@ class CommentType(TypeDecorator):
         return self.mappings_r[value]
 
 
+class Comment(Base):
+    """PTT COMMENT table."""
+
+    __tablename__ = 'comment'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    type = Column(CommentType, nullable=False)
+    author = Column(String, nullable=False)
+    published = Column(DateTime, nullable=False, index=True)
+    crawled = Column(DateTime, nullable=False)
+    content = Column(TEXT, nullable=False)
+    post_id = Column(String, ForeignKey('post.id'), nullable=True, index=True)
+
+
 class Post(Base):
     """PTT POST table."""
 
@@ -53,6 +67,7 @@ class Post(Base):
     upvote = Column(Integer)  # 推文數量
     novote = Column(Integer)  # → 數量
     downvote = Column(Integer)  # 噓文數量
+    comments = relationship(Comment, backref='post')
 
     @property
     def url(self):
