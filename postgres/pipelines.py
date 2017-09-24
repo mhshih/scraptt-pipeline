@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Scrapy pipeilnes."""
+from hashlib import sha256
 import logging
 
 from .db import Session, Post, Comment, Meta
@@ -40,7 +41,13 @@ class PTTPipeline(BasePipeline):
         )
         self.session.merge(post_obj)
         for comment in item['comments']:
+            hashid = sha256((
+                f"{item['id']}"
+                f"{comment['author']}"
+                f"{comment['time']['published']}"
+            ).encode('utf-8')).hexdigest()[:16]
             comment_obj = Comment(
+                id=hashid,
                 type=comment['type'],
                 author=comment['author'],
                 published=comment['time']['published'],
