@@ -43,7 +43,7 @@ class Comment(Base):
 
     __tablename__ = 'comment'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(CHAR(16), primary_key=True)
     type = Column(CommentType, nullable=False)
     author = Column(String, nullable=False)
     published = Column(DateTime, nullable=False, index=True)
@@ -73,20 +73,6 @@ class Post(Base):
     def url(self):
         """Return URL."""
         return f'https://www.ptt.cc/bbs/{self.board}/{self.id}.html'
-
-
-class Comment(Base):
-    """PTT COMMENT table."""
-
-    __tablename__ = 'comment'
-
-    id = Column(CHAR(16), primary_key=True)
-    type = Column(CommentType, nullable=False)
-    author = Column(String, nullable=False)
-    published = Column(DateTime, nullable=False, index=True)
-    crawled = Column(DateTime, nullable=False)
-    content = Column(TEXT, nullable=False)
-    post_id = Column(String, ForeignKey('post.id'), nullable=True, index=True)
 
 
 class Meta(Base):
