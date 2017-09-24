@@ -2,7 +2,7 @@
 """Database handlers."""
 from sqlalchemy import (
     create_engine, Column, ForeignKey, TypeDecorator,
-    String, TEXT, Integer, DateTime
+    String, TEXT, CHAR, Integer, DateTime
 )
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -65,7 +65,7 @@ class Comment(Base):
 
     __tablename__ = 'comment'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(CHAR(16), primary_key=True)
     type = Column(CommentType, nullable=False)
     author = Column(String, nullable=False)
     published = Column(DateTime, nullable=False, index=True)
