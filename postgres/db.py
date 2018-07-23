@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import ProgrammingError
 
-URI = 'cockroachdb://scraptt-db:26257/'
+URI = 'cockroachdb://root@scraptt-db:26257/'
 PARAMS = '?sslmode=disable'
 DB_NAME = 'scraptt'
 
