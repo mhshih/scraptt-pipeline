@@ -51,6 +51,7 @@ class Comment(Base):
     published = Column(DateTime, nullable=False, index=True)
     crawled = Column(DateTime, nullable=False)
     content = Column(TEXT, nullable=False)
+    ip = Column(String, nullable=True)
     post_id = Column(String, ForeignKey('post.id'), nullable=True, index=True)
 
 
@@ -66,6 +67,7 @@ class Post(Base):
     crawled = Column(DateTime, nullable=False)
     title = Column(String, nullable=False)
     content = Column(TEXT, nullable=False)
+    ip = Column(String, nullable=True)
     upvote = Column(Integer)  # 推文數量
     novote = Column(Integer)  # → 數量
     downvote = Column(Integer)  # 噓文數量

@@ -34,6 +34,7 @@ class PTTPipeline(BasePipeline):
             published=item['time']['published'],
             crawled=item['time']['crawled'],
             title=item['title'],
+            ip=item['ip'],
             content=item['content'],
             upvote=item['count']['推'],
             novote=item['count']['→'],
@@ -52,6 +53,7 @@ class PTTPipeline(BasePipeline):
                 author=comment['author'],
                 published=comment['time']['published'],
                 crawled=comment['time']['crawled'],
+                ip=comment['ip'],
                 content=comment['content'],
                 post_id=item['id'],
             )
