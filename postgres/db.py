@@ -6,11 +6,13 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import ProgrammingError
 
-URI = 'postgresql+psycopg2://postgres:1234@scraptt-db:5432'
+URI = 'cockroachdb://scraptt-db:26257/'
+PARAMS = '?sslmode=disable'
 DB_NAME = 'scraptt'
 
-engine = create_engine(f'{URI}/{DB_NAME}', echo=False)
+engine = create_engine(f'{URI}{DB_NAME}{PARAMS}', echo=False)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
@@ -87,11 +89,17 @@ class Meta(Base):
 
 def init_db():
     """Initialize database."""
-    _engine = create_engine(URI)
+    _engine = create_engine(f'{URI}system{PARAMS}')
     session = sessionmaker(bind=_engine)()
     session.connection().connection.set_isolation_level(0)
     # create database
-    session.execute(f'CREATE DATABASE {DB_NAME}')
-    session.close()
-    # create tables
-    Base.metadata.create_all(engine)
+    try:
+        session.execute(f'CREATE DATABASE {DB_NAME}')
+        session.close()
+        # create tables
+        Base.metadata.create_all(engine)
+    except ProgrammingError as e:
+        if 'already exists' in e.args[0]:
+            pass
+        else:
+            raise(e)
