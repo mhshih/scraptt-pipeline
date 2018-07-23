@@ -6,6 +6,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import ProgrammingError
 
 URI = 'cockroachdb://scraptt-db:26257/'
 PARAMS = '?sslmode=disable'
@@ -92,7 +93,13 @@ def init_db():
     session = sessionmaker(bind=_engine)()
     session.connection().connection.set_isolation_level(0)
     # create database
-    session.execute(f'CREATE DATABASE {DB_NAME}')
-    session.close()
-    # create tables
-    Base.metadata.create_all(engine)
+    try:
+        session.execute(f'CREATE DATABASE {DB_NAME}')
+        session.close()
+        # create tables
+        Base.metadata.create_all(engine)
+    except ProgrammingError as e:
+        if 'already exists' in e.args[0]:
+            pass
+        else:
+            raise(e)
