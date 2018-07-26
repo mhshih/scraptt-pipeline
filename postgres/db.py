@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Database handlers."""
+import os
+
 from sqlalchemy import (
     create_engine, Column, ForeignKey, TypeDecorator,
     String, TEXT, CHAR, Integer, DateTime
@@ -8,7 +10,10 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import ProgrammingError
 
-URI = 'cockroachdb://root@scraptt-db:26257/'
+URI = (
+    'cockroachdb://{COCKROACHDB_USER}@{COCKROACHDB_HOST}:{COCKROACHDB_PORT}/'
+    .format(**os.environ)
+)
 PARAMS = '?sslmode=disable'
 DB_NAME = 'scraptt'
 
