@@ -10,7 +10,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'SQLAlchemy==1.1.14',
-        'psycopg2-binary==2.7.5',
+        'psycopg2==2.7.5',
         'cockroachdb==0.2.0',
     ],
     classifiers=[
