@@ -8,6 +8,11 @@ setup(
     description='Scrapy pipeline for scraptt',
     url='github.com/PTT-Corpus/scraptt-pipeline',
     packages=find_packages(),
+    install_requires=[
+        'SQLAlchemy==1.1.14',
+        'psycopg2-binary==2.7.5',
+        'cockroachdb==0.2.0',
+    ],
     classifiers=[
         'Programming Language :: Python :: 3.6',
     ]
