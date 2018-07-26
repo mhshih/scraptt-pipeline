@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
 """Database handlers."""
+import os
+
 from sqlalchemy import (
     create_engine, Column, ForeignKey, TypeDecorator,
-    String, TEXT, Integer, DateTime
+    String, TEXT, CHAR, Integer, DateTime
 )
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import ProgrammingError
 
-URI = 'postgresql+psycopg2://postgres:1234@scraptt-db:5432'
+URI = (
+    'cockroachdb://{COCKROACHDB_USER}@{COCKROACHDB_HOST}:{COCKROACHDB_PORT}/'
+    .format(**os.environ)
+)
+PARAMS = '?sslmode=disable'
 DB_NAME = 'scraptt'
 
-engine = create_engine(f'{URI}/{DB_NAME}', echo=False)
+engine = create_engine(f'{URI}{DB_NAME}{PARAMS}', echo=False)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
@@ -38,6 +45,21 @@ class CommentType(TypeDecorator):
         return self.mappings_r[value]
 
 
+class Comment(Base):
+    """PTT COMMENT table."""
+
+    __tablename__ = 'comment'
+
+    id = Column(CHAR(16), primary_key=True)
+    type = Column(CommentType, nullable=False)
+    author = Column(String, nullable=False)
+    published = Column(DateTime, nullable=False, index=True)
+    crawled = Column(DateTime, nullable=False)
+    content = Column(TEXT, nullable=False)
+    ip = Column(String, nullable=True)
+    post_id = Column(String, ForeignKey('post.id'), nullable=True, index=True)
+
+
 class Post(Base):
     """PTT POST table."""
 
@@ -50,28 +72,16 @@ class Post(Base):
     crawled = Column(DateTime, nullable=False)
     title = Column(String, nullable=False)
     content = Column(TEXT, nullable=False)
+    ip = Column(String, nullable=True)
     upvote = Column(Integer)  # 推文數量
     novote = Column(Integer)  # → 數量
     downvote = Column(Integer)  # 噓文數量
+    comments = relationship(Comment, backref='post')
 
     @property
     def url(self):
         """Return URL."""
         return f'https://www.ptt.cc/bbs/{self.board}/{self.id}.html'
-
-
-class Comment(Base):
-    """PTT COMMENT table."""
-
-    __tablename__ = 'comment'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    type = Column(CommentType, nullable=False)
-    author = Column(String, nullable=False)
-    published = Column(DateTime, nullable=False, index=True)
-    crawled = Column(DateTime, nullable=False)
-    content = Column(TEXT, nullable=False)
-    post_id = Column(String, ForeignKey('post.id'), nullable=True, index=True)
 
 
 class Meta(Base):
@@ -86,11 +96,17 @@ class Meta(Base):
 
 def init_db():
     """Initialize database."""
-    _engine = create_engine(URI)
+    _engine = create_engine(f'{URI}system{PARAMS}')
     session = sessionmaker(bind=_engine)()
     session.connection().connection.set_isolation_level(0)
     # create database
-    session.execute(f'CREATE DATABASE {DB_NAME}')
-    session.close()
-    # create tables
-    Base.metadata.create_all(engine)
+    try:
+        session.execute(f'CREATE DATABASE {DB_NAME}')
+        session.close()
+        # create tables
+        Base.metadata.create_all(engine)
+    except ProgrammingError as e:
+        if 'already exists' in e.args[0]:
+            pass
+        else:
+            raise(e)
