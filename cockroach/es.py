@@ -26,6 +26,28 @@ def seg_str(text):
 class Doc(Document):
     """Elasticsearch document."""
 
+    post_type = Integer(required=True)
+    board = Text(required=True)
+    author = Text(required=True)
+    published = Date(required=True)
+    title = Text()
+    content = Text(required=True)
+    ip = Text()
+    upvote = Integer()
+    novote = Integer()
+    downvote = Integer()
+    type = Text()
+    post_id = Text()
+
+    class Index:
+        """Index info."""
+
+        name = 'ptt'
+
+
+class AlchemyDoc(Doc):
+    """ES Doc for SQLAlcheymy."""
+
     def __init__(self, *args, **kwargs):
         """Post process for fields."""
         kwargs.pop('_sa_instance_state')
@@ -41,18 +63,11 @@ class Doc(Document):
         super().__init__(*args, **kwargs)
         self.meta.id = kwargs.pop('id')
 
-    post_type = Integer(required=True)
-    board = Text(required=True)
-    author = Text(required=True)
-    published = Date(required=True)
-    title = Text()
-    content = Text(required=True)
-    ip = Text()
-    upvote = Integer()
-    novote = Integer()
-    downvote = Integer()
 
-    class Index:
-        """Index info."""
+class CockroachDoc(Doc):
+    """ES Doc for CockroachDB."""
 
-        name = 'ptt'
+    def __init__(self, *args, **kwargs):
+        """Post process for fields."""
+        super().__init__(*args, **kwargs)
+        self.meta.id = kwargs.pop('id')
