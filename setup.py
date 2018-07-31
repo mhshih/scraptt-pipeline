@@ -12,6 +12,9 @@ setup(
         'SQLAlchemy==1.1.14',
         'psycopg2==2.7.5',
         'cockroachdb==0.2.0',
+        'elasticsearch==6.3.0',
+        'elasticsearch-dsl==6.2.1',
+        'jseg==0.0.4',
     ],
     classifiers=[
         'Programming Language :: Python :: 3.6',
