@@ -20,7 +20,8 @@ def seg_str(text):
     """Segmentate strings."""
     if not text:
         return ''
-    return ' '.join(f'{_[0]}:{_[1]}' for _ in j.seg(text, pos=True))
+    output = ' '.join(j.seg(text))
+    return output
 
 
 class Doc(Document):
@@ -69,5 +70,8 @@ class CockroachDoc(Doc):
 
     def __init__(self, *args, **kwargs):
         """Post process for fields."""
+        if 'title' in kwargs:
+            kwargs['title'] = seg_str(kwargs['title'])
+        kwargs['content'] = seg_str(kwargs['content'])
         super().__init__(*args, **kwargs)
         self.meta.id = kwargs.pop('id')
